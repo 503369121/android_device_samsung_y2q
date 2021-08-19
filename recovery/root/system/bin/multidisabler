@@ -66,6 +66,7 @@ disable_fbe() {
   # Snapdragon devices = fstab.qcom.
   #
   for i in /vendor/etc/fstab.exynos* \
+	   /vendor/etc/fstab.mt* \
 	   /vendor/etc/fstab.qcom*; do
     if [ -f $i ]; then
       echo " -   Found $i."
