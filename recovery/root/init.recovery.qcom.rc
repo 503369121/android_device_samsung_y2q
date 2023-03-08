@@ -25,12 +25,31 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-on boot
-    setprop ro.boot.vbmeta.avb_version 1.1
-    setprop ro.boot.avb_version 1.1
+import /init.recovery.qcom_decrypt.rc
+
+on init
+    setprop prepdecrypt.setpatch true
 
 on fs
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
 
+    # Mount firmware
+    mkdir /vendor/firmware_mnt
+    mount vfat /dev/block/bootdevice/by-name/apnhlos /vendor/firmware_mnt ro
+
+    # Mount efs
+    mkdir /mnt/vendor/efs
+    mount ext4 /dev/block/bootdevice/by-name/efs /mnt/vendor/efs ro
+
     export ANDROID_ROOT /system_root
+
+on boot
+    start health-hal-2-1
+
+on property:crypto.ready=1
+    start keymaster-sb-4-0
+
+on property:crypto.ready=0
+    stop keymaster-sb-4-0
+    umount /mnt/vendor/efs

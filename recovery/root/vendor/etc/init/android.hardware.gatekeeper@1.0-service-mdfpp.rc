@@ -1,0 +1,10 @@
+service gatekeeper-1-0 /system/bin/android.hardware.gatekeeper@1.0-service
+    interface android.hardware.gatekeeper@1.0::IGatekeeper mdfpp
+    user root
+    group root
+    setenv LD_LIBRARY_PATH /vendor/lib64:/vendor/lib:/system/lib64:/system/lib:/sbin
+    disabled
+    seclabel u:r:recovery:s0
+
+on post-fs-data
+    mkdir /data/vendor/gatekeeper 0770 system system
